@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Compiled class file
 *.class
 
@@ -21,3 +22,17 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+=======
+/.settings
+/bin
+*/target/*
+/logs
+*/out/
+*.iml
+.project
+.classpath
+.idea/
+.class
+*.class
+*.log
+>>>>>>> 1b6a218... 基于JDK原生序列化与JDK动态代理的rpc
