@@ -1,6 +1,10 @@
 package com.xunle.rpc.client;
 
 import com.xunle.rpc.entity.RpcRequest;
+import com.xunle.rpc.entity.RpcResponse;
+import com.xunle.rpc.enumeration.ResponseCode;
+import com.xunle.rpc.enumeration.RpcError;
+import com.xunle.rpc.exception.RpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +27,20 @@ public class RpcClient {
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             objectOutputStream.writeObject(rpcRequest);
             objectOutputStream.flush();
-            return objectInputStream.readObject();
+
+            RpcResponse response = (RpcResponse) objectInputStream.readObject();
+            if (response == null) {
+                logger.error("服务调用失败，service: {}", rpcRequest.getInterfaceName());
+                throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, " service: " + rpcRequest.getInterfaceName());
+            }
+            if (response.getCode() == null || response.getCode() != ResponseCode.SUCCESS.getCode()) {
+                logger.error("调用服务失败，service: {}",rpcRequest.getInterfaceName());
+                throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, " service: " + rpcRequest.getInterfaceName());
+            }
+            return response.getData();
         } catch (IOException | ClassNotFoundException e) {
             logger.error("客户端连接出错：", e);
-            return null;
+            throw new RpcException("服务调用失败：", e);
         }
     }
 }
