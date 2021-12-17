@@ -2,6 +2,8 @@ package com.xunle.rpc.client;
 
 import com.xunle.rpc.entity.RpcRequest;
 import com.xunle.rpc.entity.RpcResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -13,6 +15,8 @@ import java.lang.reflect.Proxy;
  * @date 2021/12/10 18:01
  */
 public class RpcClientProxy implements InvocationHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcClientProxy.class);
 
     private String host;
     private int port;
@@ -29,6 +33,8 @@ public class RpcClientProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
+        LOGGER.info("调用方法：{}#{}", method.getDeclaringClass().getName(), method.getName());
         RpcRequest rpcRequest = RpcRequest.builder()
                 .interfaceName(method.getDeclaringClass().getName())
                 .methodName(method.getName())
@@ -36,7 +42,6 @@ public class RpcClientProxy implements InvocationHandler {
                 .paramTypes(method.getParameterTypes())
                 .build();
         RpcClient rpcClient = new RpcClient();
-        RpcResponse rpcResponse = (RpcResponse)rpcClient.sendRequest(rpcRequest, host, port);
-        return rpcResponse.getData();
+        return rpcClient.sendRequest(rpcRequest,host,port);
     }
 }
