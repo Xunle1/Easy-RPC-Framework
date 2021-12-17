@@ -10,7 +10,7 @@ import com.xunle.rpc.client.RpcClientProxy;
 public class TestClient {
 
     public static void main(String[] args) {
-        RpcClientProxy proxy = new RpcClientProxy("127.0.0.1",9000);
+        RpcClientProxy proxy = new RpcClientProxy("127.0.0.1",8000);
         HelloService helloService = proxy.getProxy(HelloService.class);
         HelloObject object = new HelloObject(12,"test rpc");
         String res = helloService.hello(object);

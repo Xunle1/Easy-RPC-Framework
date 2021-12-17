@@ -1,4 +1,6 @@
 import com.xunle.rpc.api.HelloService;
+import com.xunle.rpc.registry.DefaultServiceRegistry;
+import com.xunle.rpc.registry.ServiceRegistry;
 import com.xunle.rpc.server.RpcServer;
 
 /**
@@ -10,7 +12,9 @@ public class TestServer {
 
     public static void main(String[] args) {
         HelloService helloService = new HelloServiceImpl();
-        RpcServer rpcServer = new RpcServer();
-        rpcServer.register(helloService,9000);
+        ServiceRegistry registry = new DefaultServiceRegistry();
+        registry.register(helloService);
+        RpcServer rpcServer = new RpcServer(registry);
+        rpcServer.start(8000);
     }
 }

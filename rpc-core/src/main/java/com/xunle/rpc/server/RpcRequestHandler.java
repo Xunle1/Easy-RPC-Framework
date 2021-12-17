@@ -18,43 +18,29 @@ import java.net.Socket;
  * @author xunle
  * @date 2021/12/10 17:50
  */
-public class RpcRequestHandler implements Runnable{
+public class RpcRequestHandler{
 
-    private static final Logger logger = LoggerFactory.getLogger(RpcRequestHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcRequestHandler.class);
 
-    private Socket socket;
-    private Object service;
-
-    public RpcRequestHandler(Socket socket, Object service) {
-        this.socket = socket;
-        this.service = service;
-    }
-
-    @Override
-    public void run() {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())) {
-
-            RpcRequest rpcRequest = (RpcRequest)objectInputStream.readObject();
-            Object result = invokeMethod(rpcRequest);
-            objectOutputStream.writeObject(RpcResponse.success(result));
-            objectOutputStream.flush();
-        } catch (IOException  | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
-            logger.error("调用时或发送时发生错误：", e);
-        }
-    }
-
-    public Object invokeMethod(RpcRequest rpcRequest) throws ClassNotFoundException, InvocationTargetException, IllegalAccessException{
-        Class<?> clazz = Class.forName(rpcRequest.getMethodName());
-        if (!clazz.isAssignableFrom(service.getClass())) {
-            return RpcResponse.fail(ResponseCode.NOT_FOUND_CLASS);
-        }
-        Method method;
+    public Object handle(RpcRequest request, Object service) {
+        Object result = null;
         try {
-            method = service.getClass().getMethod(rpcRequest.getMethodName(),rpcRequest.getParamTypes());
+            result = invokeTargetMethod(request,service);
+            LOGGER.info("服务:{} 成功调用方法:{}", request.getInterfaceName(), request.getMethodName());
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            LOGGER.error("调用或发送时出现错误：",e);
+        }
+        return result;
+    }
+
+    private Object invokeTargetMethod(RpcRequest request, Object service) throws IllegalAccessException, InvocationTargetException{
+        Method method;
+
+        try {
+            method = service.getClass().getMethod(request.getMethodName(),request.getParamTypes());
         } catch (NoSuchMethodException e) {
             return RpcResponse.fail(ResponseCode.NOT_FOUND_METHOD);
         }
-        return method.invoke(service,rpcRequest.getParameters());
+        return method.invoke(service,request.getParameters());
     }
 }
