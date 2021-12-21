@@ -2,6 +2,7 @@ package com.xunle.rpc.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @date 2021/12/9 23:53
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class HelloObject implements Serializable {
 

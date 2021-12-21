@@ -1,3 +1,5 @@
+package com.xunle.test;
+
 import com.xunle.rpc.api.HelloObject;
 import com.xunle.rpc.api.HelloService;
 import org.slf4j.Logger;
