@@ -2,11 +2,11 @@
 
 ```
 +----------------+----------------+-----------------+----------------+
-|  Magic Number  |  Package Type  | Serializer Type |  Data length   |
+|  Magic Number  |  Package Type  | Serializer Type |  Data Length   |
 |    4 bytes     |    4 bytes     |     4 bytes     |    4 bytes     |
 +----------------+----------------+-----------------+----------------+
 |                             Data Bytes                             |
-|                        Length: ${Data length}                      |
+|                        Length: ${Data Length}                      |
 +--------------------------------------------------------------------+
 ```
 

@@ -24,15 +24,20 @@ public class CommonEncoder extends MessageToByteEncoder {
 
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object object, ByteBuf byteBuf) throws Exception {
+        //Magic Number
         byteBuf.writeInt(MAGIC_NUMBER);
+        //PackageType
         if (object instanceof RpcRequest) {
             byteBuf.writeInt(PackageType.REQUEST_PACK.getCode());
         } else {
             byteBuf.writeInt(PackageType.RESPONSE_PACK.getCode());
         }
+        //SerializerCode
         byteBuf.writeInt(serializer.getCode());
         byte[] bytes = serializer.serialize(object);
+        //Data Length
         byteBuf.writeInt(bytes.length);
+        //Data Bytes
         byteBuf.writeBytes(bytes);
     }
 }
