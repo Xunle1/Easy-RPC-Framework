@@ -1,8 +1,10 @@
 package com.xunle.rpc.serializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xunle.rpc.entity.RpcRequest;
+import com.xunle.rpc.entity.RpcResponse;
 import com.xunle.rpc.enumeration.SerializerCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +35,18 @@ public class JsonSerializer implements CommonSerializer{
     }
 
     @Override
-    public Object deserialize(byte[] bytes, Class<?> clazz) {
+    public <T> T deserialize(byte[] bytes, Class<T> clazz) {
         try {
-            Object object = objectMapper.readValue(bytes, clazz);
-            if (object instanceof RpcRequest) {
+            Object object;
+            if (clazz.isAssignableFrom(RpcResponse.class)) {
+                //泛型反序列化还是无法正确反序列化
+                object = objectMapper.readValue(bytes, new TypeReference<RpcResponse<T>>() {});
+            } else {
+                object = objectMapper.readValue(bytes, clazz);
                 object = handleRequest(object);
             }
-//            LOGGER.info("反序列化结果：{}", object);
-            return object;
+//            LOGGER.info("反序列化对象：{}", clazz);
+            return clazz.cast(object);
         } catch (IOException e) {
             LOGGER.error("json反序列化时发生错误：{}",e.getMessage());
             e.printStackTrace();

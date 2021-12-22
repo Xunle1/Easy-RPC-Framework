@@ -22,7 +22,7 @@ public class RpcRequestHandler{
         Object result = null;
         try {
             result = invokeTargetMethod(request,service);
-            LOGGER.info("服务:{} 成功调用方法:{}", request.getInterfaceName(), request.getMethodName());
+            LOGGER.info("服务: {} 成功调用方法: {}", request.getInterfaceName(), request.getMethodName());
         } catch (IllegalAccessException | InvocationTargetException e) {
             LOGGER.error("调用或发送时出现错误：",e);
         }
